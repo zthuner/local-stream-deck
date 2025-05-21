@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Local Stream Deck</title>
+  <style>
+    body {
+      background-color: #1e1e1e;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: white;
+    }
+
+    .controls {
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .controls input, .controls select {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      width: 150px;
+    }
+
+    .controls button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+    }
+
+    .controls button:hover {
+      background-color: #666;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(8, 150px);
+      grid-gap: 15px;
+      justify-content: center;
+    }
+
+    button.stream-button {
+      width: 150px;
+      height: 100px;
+      font-size: 14px;
+      background-color: #333;
+      color: #fff;
+      border: 2px solid #555;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button.stream-button:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    IP:
+    <select id="ip">
+      <option value="192.168.88.235" selected>192.168.88.235</option>
+      <option value="127.0.0.1">127.0.0.1</option>
+    </select>
+    Port: <input type="text" id="port" value="8888">
+    <button onclick="applySettings()">Set IP/Port</button>
+    <span id="status">Current: 192.168.88.235:8888</span>
+  </div>
+
+  <div class="grid">
+    <button class="stream-button" onclick="press(1, this)">Lectern</button>
+    <button class="stream-button" onclick="press(2, this)">Volume UP</button>
+    <button class="stream-button" onclick="press(3, this)">Pastor</button>
+    <button class="stream-button" onclick="press(4, this)">Volume UP</button>
+    <button class="stream-button" onclick="press(5, this)">Guest</button>
+    <button class="stream-button" onclick="press(6, this)">Volume UP</button>
+    <button class="stream-button" onclick="press(7, this)"></button>
+    <button class="stream-button" onclick="press(8, this)">Audiance</button>
+    <button class="stream-button" onclick="press(9, this)"></button>
+    <button class="stream-button" onclick="press(10, this)">Volume Down</button>
+    <button class="stream-button" onclick="press(11, this)"></button>
+    <button class="stream-button" onclick="press(12, this)">Volume Down</button>
+    <button class="stream-button" onclick="press(13, this)"></button>
+    <button class="stream-button" onclick="press(14, this)">Volume Down</button>
+    <button class="stream-button" onclick="press(15, this)"></button>
+    <button class="stream-button" onclick="press(16, this)"></button>
+    <button class="stream-button" onclick="press(17, this)">OBS Main Cam</button>
+    <button class="stream-button" onclick="press(18, this)">OBS Countdown (1 Min) & First Title</button>
+    <button class="stream-button" onclick="press(19, this)">OBS First Reading</button>
+    <button class="stream-button" onclick="press(20, this)">OBS Second Reading</button>
+    <button class="stream-button" onclick="press(21, this)">OBS Psalm</button>
+    <button class="stream-button" onclick="press(22, this)">OBS Gospel</button>
+    <button class="stream-button" onclick="press(23, this)">OBS Sermon</button>
+    <button class="stream-button" onclick="press(24, this)">OBS End Title</button>
+    <button class="stream-button" onclick="press(25, this)">A1</button>
+    <button class="stream-button" onclick="press(26, this)">A2</button>
+    <button class="stream-button" onclick="press(27, this)">A3</button>
+    <button class="stream-button" onclick="press(28, this)">A4</button>
+    <button class="stream-button" onclick="press(29, this)">Wireless Handheld</button>
+    <button class="stream-button" onclick="press(30, this)">Beltpack</button>
+    <button class="stream-button" onclick="press(31, this)">Turn OFF</button>
+    <button class="stream-button" onclick="press(32, this)">Turn ON</button>
+  </div>
+
+  <script>
+    let currentIP = '192.168.88.235';
+    let currentPort = '8888';
+
+    function applySettings() {
+      const ip = document.getElementById('ip').value.trim();
+      const port = document.getElementById('port').value.trim();
+
+      if (ip && port) {
+        currentIP = ip;
+        currentPort = port;
+        document.getElementById('status').textContent = `Current: ${currentIP}:${currentPort}`;
+      } else {
+        alert("Please enter a valid IP and port.");
+      }
+    }
+
+    function press(buttonNumber, buttonElement) {
+      const url = `http://${currentIP}:${currentPort}/press/bank/1/${buttonNumber}`;
+      const originalText = buttonElement.textContent;
+
+      fetch(url)
+        .then(response => {
+          buttonElement.textContent = response.ok ? 'Success' : 'Error';
+          setTimeout(() => {
+            buttonElement.textContent = originalText;
+          }, 1000);
+        })
+        .catch(() => {
+          buttonElement.textContent = 'Failed';
+          setTimeout(() => {
+            buttonElement.textContent = originalText;
+          }, 1000);
+        });
+    }
+  </script>
+
+</body>
+</html>
